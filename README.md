@@ -84,14 +84,14 @@ __[CLI Documentation](cli)__
 ### Basic usage:
 
 ```
-$ migrate -source file://path/to/migrations -database postgres://localhost:5432/database up 2
+$ migrate --source file://path/to/migrations --database.dsn postgres://localhost:5432/database up 2
 ```
 
 ### Docker usage
 
 ```
 $ docker run -v {{ migration dir }}:/migrations --network host migrate/migrate 
-    -path=/migrations/ -database postgres://localhost:5432/database up 2
+    --path=/migrations/ --database.dsn postgres://localhost:5432/database up 2
 ```
 
 ## Use in your Go project

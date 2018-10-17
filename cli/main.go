@@ -37,6 +37,7 @@ Options:
   --database.user        database username (default "postgres")
   --database.password    database password (default "postgres")
   --database.ssl         database ssl mode (default "disable")
+  --database.app_name    application name for create database and roles
   --path                 Shorthand for -source=file://path
   --source               Location of the migrations (driver://url)
   --lock-timeout         Allow N seconds to acquire database lock (default 15)
@@ -89,6 +90,7 @@ func main() {
 			viper.GetString("database.driver"), viper.GetString("database.user"),
 			viper.GetString("database.password"), viper.GetString("database.address"),
 			viper.GetString("database.name"), viper.GetString("database.ssl"),
+			viper.GetString("database.app_name"),
 		)
 	}
 
@@ -278,8 +280,14 @@ func main() {
 	}
 }
 
-func dbMakeConnectionString(driver, user, password, address, name, ssl string) string {
-	return fmt.Sprintf("%s://%s:%s@%s/%s?sslmode=%s",
-		driver, user, password, address, name, ssl,
-	)
+func dbMakeConnectionString(driver, user, password, address, name, ssl, app_name string) string {
+	if app_name == "" {
+		return fmt.Sprintf("%s://%s:%s@%s/%s?sslmode=%s",
+			driver, user, password, address, name, ssl,
+		)
+	} else {
+	    migration_table := app_name + "_database_role_migrations"
+	    return fmt.Sprintf("%s://%s:%s@%s/%s?sslmode=%s&x-migrations-table=%s",
+            driver, user, password, address, name, ssl, migration_table)
+	}
 }
